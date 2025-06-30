@@ -14,5 +14,10 @@ CHIP DMux4Way {
     OUT a, b, c, d;
 
     PARTS:
-    //// Replace this comment with your code.
+    DMux(in = in, sel = sel[0], a = smux1, b = smux2);
+    Not(in = sel[1], out = snot);
+    And(a = smux1, b = snot, out = a);
+    And(a = smux2, b = snot, out = b);
+    And(a = smux1, b = sel[1], out = c);
+    And(a = smux2, b = sel[1], out = d);
 }
