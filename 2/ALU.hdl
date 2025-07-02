@@ -41,5 +41,59 @@ CHIP ALU {
         ng;      // if (out < 0)  equals 1, else 0
 
     PARTS:
-    //// Replace this comment with your code.
+    // zx
+    Not(in = zx, out = notzx);
+    And16(a = x, 
+          b[0] = notzx, b[1] = notzx, b[2] = notzx, b[3] = notzx,
+          b[4] = notzx, b[5] = notzx, b[6] = notzx, b[7] = notzx,
+          b[8] = notzx, b[9] = notzx, b[10] = notzx, b[11] = notzx,
+          b[12] = notzx, b[13] = notzx, b[14] = notzx, b[15] = notzx,
+          out = zxout);
+
+    // nx
+    Not16(in = zxout, out = nxout);
+    Mux16(a = zxout, b = nxout, sel = nx, out = xout);
+
+    // zy
+    Not(in = zy, out = notzy);
+    And16(a = y, 
+          b[0] = notzy, b[1] = notzy, b[2] = notzy, b[3] = notzy,
+          b[4] = notzy, b[5] = notzy, b[6] = notzy, b[7] = notzy,
+          b[8] = notzy, b[9] = notzy, b[10] = notzy, b[11] = notzy,
+          b[12] = notzy, b[13] = notzy, b[14] = notzy, b[15] = notzy,
+          out = zyout);
+
+    // ny
+    Not16(in = zyout, out = nyout);
+    Mux16(a = zyout, b = nyout, sel = ny, out = yout);
+
+    // x + y || x & y
+    Add16(a = xout, b = yout, out = addout);
+    And16(a = xout, b = yout, out = andout);
+    Mux16(a = andout, b = addout, sel = f, out = calcout);
+
+    Not16(in = calcout, out = nout);
+    Mux16(a = calcout, b = nout, sel = no, out = out, out[15] = ng,
+          out[0] = out0, out[1] = out1, out[2] = out2, out[3] = out3,
+          out[4] = out4, out[5] = out5, out[6] = out6, out[7] = out7,
+          out[8] = out8, out[9] = out9, out[10] = out10, out[11] = out11,
+          out[12] = out12, out[13] = out13, out[14] = out14, out[15] = out15);
+    
+    // Check if output is zero (zr flag)
+    Or(a = out0, b = out1, out = checkzero1);
+    Or(a = checkzero1, b = out2, out = checkzero2);
+    Or(a = checkzero2, b = out3, out = checkzero3);
+    Or(a = checkzero3, b = out4, out = checkzero4);
+    Or(a = checkzero4, b = out5, out = checkzero5);
+    Or(a = checkzero5, b = out6, out = checkzero6);
+    Or(a = checkzero6, b = out7, out = checkzero7);
+    Or(a = checkzero7, b = out8, out = checkzero8);
+    Or(a = checkzero8, b = out9, out = checkzero9);
+    Or(a = checkzero9, b = out10, out = checkzero10);
+    Or(a = checkzero10, b = out11, out = checkzero11);
+    Or(a = checkzero11, b = out12, out = checkzero12);
+    Or(a = checkzero12, b = out13, out = checkzero13);
+    Or(a = checkzero13, b = out14, out = checkzero14);
+    Or(a = checkzero14, b = out15, out = anybits);
+    Not(in = anybits, out = zr);
 }
